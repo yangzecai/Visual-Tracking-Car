@@ -423,6 +423,11 @@
               <FileType>1</FileType>
               <FilePath>../Core/Src/stm32f1xx_hal_msp.c</FilePath>
             </File>
+            <File>
+              <FileName>car.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Core\Src\car.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>

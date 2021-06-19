@@ -19,9 +19,10 @@
 
 /* Includes ------------------------------------------------------------------*/
 #include "tim.h"
+#include "car.h"
 
 /* USER CODE BEGIN 0 */
-
+#include <stdio.h>
 /* USER CODE END 0 */
 
 TIM_HandleTypeDef htim1;
@@ -253,6 +254,10 @@ void HAL_TIM_Base_MspInit(TIM_HandleTypeDef* tim_baseHandle)
   /* USER CODE END TIM4_MspInit 0 */
     /* TIM4 clock enable */
     __HAL_RCC_TIM4_CLK_ENABLE();
+
+    /* TIM4 interrupt Init */
+    HAL_NVIC_SetPriority(TIM4_IRQn, 0, 0);
+    HAL_NVIC_EnableIRQ(TIM4_IRQn);
   /* USER CODE BEGIN TIM4_MspInit 1 */
 
   /* USER CODE END TIM4_MspInit 1 */
@@ -356,6 +361,9 @@ void HAL_TIM_Base_MspDeInit(TIM_HandleTypeDef* tim_baseHandle)
   /* USER CODE END TIM4_MspDeInit 0 */
     /* Peripheral clock disable */
     __HAL_RCC_TIM4_CLK_DISABLE();
+
+    /* TIM4 interrupt Deinit */
+    HAL_NVIC_DisableIRQ(TIM4_IRQn);
   /* USER CODE BEGIN TIM4_MspDeInit 1 */
 
   /* USER CODE END TIM4_MspDeInit 1 */
@@ -404,7 +412,20 @@ void HAL_TIM_Encoder_MspDeInit(TIM_HandleTypeDef* tim_encoderHandle)
 }
 
 /* USER CODE BEGIN 1 */
-
+void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim) {
+	static int pwm = 0;
+	if(htim->Instance == TIM4) {
+		if(++pwm > 50) {
+			HAL_GPIO_TogglePin(LED_GPIO_Port, LED_Pin);
+			pwm = 0;
+		}
+	}
+	/*uint16_t cnt2 = 0;
+	uint16_t cnt3 = 0;
+	cnt2 = __HAL_TIM_GET_COUNTER(&htim2);
+	cnt3 = __HAL_TIM_GET_COUNTER(&htim3);*/
+	printf("TIM2 = %5d, TIM3 = %5d\r\n", readAndClearEncoder(&motor1), readAndClearEncoder(&motor2));
+}
 /* USER CODE END 1 */
 
 /************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/
