@@ -3,16 +3,14 @@
 int PIDControl(PID *pid, int current, int target)
 {
 	int error = target - current;
-	int control = current;
-	control += pid->kp * (error - pid->lastError) + 
-			   pid->ki * error +
-			   pid->kd * (error - 2*pid->lastError + pid->lastLastError);
+	pid->output += pid->kp * (error - pid->lastError) + 
+				   pid->ki * error * pid->dt +
+			       pid->kd * (error - 2*pid->lastError + 
+							  pid->lastLastError) / pid->dt;
+	
 	pid->lastLastError = pid->lastError;
 	pid->lastError = error;
-	pid->current = current;
-	return control;
+	
+	return (int)pid->output;
 }
 
-int getCurrent(PID *pid) {
-	return pid->current;
-}

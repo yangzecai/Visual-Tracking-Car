@@ -5,12 +5,12 @@ typedef struct {
 	float kp;
 	float ki;
 	float kd;
+	float dt;
 	int lastError;
 	int lastLastError;
-	int current;	// for debug
+	float output;
 } PID;
 
 int PIDControl(PID *pid, int current, int target);
-int getCurrent(PID *pid);
 
 #endif

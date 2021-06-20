@@ -19,9 +19,10 @@
 
 /* Includes ------------------------------------------------------------------*/
 #include "tim.h"
-#include "car.h"
 
 /* USER CODE BEGIN 0 */
+#include "motor.h"
+
 #include <stdio.h>
 /* USER CODE END 0 */
 
@@ -209,7 +210,7 @@ void MX_TIM4_Init(void)
   htim4.Instance = TIM4;
   htim4.Init.Prescaler = 720-1;
   htim4.Init.CounterMode = TIM_COUNTERMODE_UP;
-  htim4.Init.Period = 2000-1;
+  htim4.Init.Period = 5000-1;
   htim4.Init.ClockDivision = TIM_CLOCKDIVISION_DIV1;
   htim4.Init.AutoReloadPreload = TIM_AUTORELOAD_PRELOAD_ENABLE;
   if (HAL_TIM_Base_Init(&htim4) != HAL_OK)
@@ -281,7 +282,7 @@ void HAL_TIM_Encoder_MspInit(TIM_HandleTypeDef* tim_encoderHandle)
     PA0-WKUP     ------> TIM2_CH1
     PA1     ------> TIM2_CH2
     */
-    GPIO_InitStruct.Pin = ME1_A_Pin|ME1_B_Pin;
+    GPIO_InitStruct.Pin = ME2_A_Pin|ME2_B_Pin;
     GPIO_InitStruct.Mode = GPIO_MODE_INPUT;
     GPIO_InitStruct.Pull = GPIO_NOPULL;
     HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
@@ -303,7 +304,7 @@ void HAL_TIM_Encoder_MspInit(TIM_HandleTypeDef* tim_encoderHandle)
     PA6     ------> TIM3_CH1
     PA7     ------> TIM3_CH2
     */
-    GPIO_InitStruct.Pin = ME2_A_Pin|ME2_B_Pin;
+    GPIO_InitStruct.Pin = ME1_A_Pin|ME1_B_Pin;
     GPIO_InitStruct.Mode = GPIO_MODE_INPUT;
     GPIO_InitStruct.Pull = GPIO_NOPULL;
     HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
@@ -385,7 +386,7 @@ void HAL_TIM_Encoder_MspDeInit(TIM_HandleTypeDef* tim_encoderHandle)
     PA0-WKUP     ------> TIM2_CH1
     PA1     ------> TIM2_CH2
     */
-    HAL_GPIO_DeInit(GPIOA, ME1_A_Pin|ME1_B_Pin);
+    HAL_GPIO_DeInit(GPIOA, ME2_A_Pin|ME2_B_Pin);
 
   /* USER CODE BEGIN TIM2_MspDeInit 1 */
 
@@ -403,7 +404,7 @@ void HAL_TIM_Encoder_MspDeInit(TIM_HandleTypeDef* tim_encoderHandle)
     PA6     ------> TIM3_CH1
     PA7     ------> TIM3_CH2
     */
-    HAL_GPIO_DeInit(GPIOA, ME2_A_Pin|ME2_B_Pin);
+    HAL_GPIO_DeInit(GPIOA, ME1_A_Pin|ME1_B_Pin);
 
   /* USER CODE BEGIN TIM3_MspDeInit 1 */
 
@@ -412,23 +413,7 @@ void HAL_TIM_Encoder_MspDeInit(TIM_HandleTypeDef* tim_encoderHandle)
 }
 
 /* USER CODE BEGIN 1 */
-void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim) {
-	static int pwm = 0;
-	if(htim->Instance == TIM4) {
-		if(++pwm > 50) {
-			HAL_GPIO_TogglePin(LED_GPIO_Port, LED_Pin);
-			pwm = 0;
-		}
-	}
-	/*uint16_t cnt2 = 0;
-	uint16_t cnt3 = 0;
-	cnt2 = __HAL_TIM_GET_COUNTER(&htim2);
-	cnt3 = __HAL_TIM_GET_COUNTER(&htim3);*/
-	
-	//printf("TIM2 = %5d, TIM3 = %5d\r\n", readAndClearEncoder(&motor1), readAndClearEncoder(&motor2));
-	//motorControlwithPID(&motor1, 50);
-	//printf("%d\r\n", getCurrent(&motor1.pid));
-}
+
 /* USER CODE END 1 */
 
 /************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/
