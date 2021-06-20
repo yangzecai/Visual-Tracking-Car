@@ -2,6 +2,9 @@
 #define __CAR_H__
 
 #include "tim.h"
+#include "pid.h"
+
+#define ABS(x) (x>0 ? x : -x)
 
 typedef struct {
 	GPIO_TypeDef*		in1Gpiox;
@@ -11,6 +14,8 @@ typedef struct {
 	TIM_HandleTypeDef*	pwmHtimx;
 	uint32_t			pwmChannelx;
 	TIM_HandleTypeDef* 	encoderHtimx;
+	int 				maxAbsSpeed;
+	PID					pid;
 } Motor;
 
 extern Motor motor1;
@@ -18,7 +23,6 @@ extern Motor motor2;
 
 void motor1Init(void);
 void motor2Init(void);
-short readAndClearEncoder(Motor*);
-void motorDrive(Motor*, int);
+void motorControlwithPID(Motor *motor, int speed);
 
 #endif

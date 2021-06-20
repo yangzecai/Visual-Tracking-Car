@@ -3,6 +3,17 @@
 Motor motor1;
 Motor motor2;
 
+int commonMotorMaxAbsSpeed = 100;
+
+void commonMotorPIDInit(Motor *motor)
+{
+	motor->pid.kp = 0.1;
+	motor->pid.ki = 0;
+	motor->pid.kd = 0;
+	motor->pid.lastError = 0;
+	motor->pid.lastLastError = 0;
+}
+
 void motor1Init()
 {
 	// If the motor reverses, exchange the configuration 
@@ -15,8 +26,12 @@ void motor1Init()
 	
 	motor1.pwmHtimx = &htim1;
 	motor1.pwmChannelx = TIM_CHANNEL_1;
-	
+
 	motor1.encoderHtimx = &htim2;
+	
+	motor1.maxAbsSpeed = commonMotorMaxAbsSpeed;
+	
+	commonMotorPIDInit(&motor1);
 }
 
 void motor2Init()
@@ -33,6 +48,10 @@ void motor2Init()
 	motor2.pwmChannelx = TIM_CHANNEL_2;
 	
 	motor2.encoderHtimx = &htim3;
+	
+	motor2.maxAbsSpeed = commonMotorMaxAbsSpeed;
+	
+	commonMotorPIDInit(&motor2);
 }
 
 short readAndClearEncoder(Motor *motor) 
@@ -59,5 +78,20 @@ void motorDrive(Motor *motor, int speed)
 	HAL_GPIO_WritePin(motor->in1Gpiox, motor->in1Pinx, in1State);
 	HAL_GPIO_WritePin(motor->in2Gpiox, motor->in2Pinx, in2State);
 	__HAL_TIM_SetCompare(motor->pwmHtimx, motor->pwmChannelx, 
-						 speed>0 ? speed : -speed);
+						 speed > 0 ? speed : -speed);
+}
+
+void motorControlwithPID(Motor *motor, int speed) 
+{
+	
+	if(speed > motor->maxAbsSpeed) {	// speed limiting
+		speed = motor->maxAbsSpeed;
+	} else if(speed < -motor->maxAbsSpeed) {
+		speed = -motor->maxAbsSpeed;
+	}
+	
+	int control = PIDControl(&motor->pid, 
+							 readAndClearEncoder(motor), 
+							 speed);
+	motorDrive(motor, control);
 }

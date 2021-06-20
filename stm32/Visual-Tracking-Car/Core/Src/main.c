@@ -104,13 +104,13 @@ int main(void)
 	HAL_TIM_PWM_Start(&htim1, TIM_CHANNEL_2);
 	motor1Init();
 	motor2Init();
+	
+	motorControlwithPID(&motor1, 50);
   /* USER CODE END 2 */
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
-  printf("\r\n");
-  motorDrive(&motor1, 1000);
-  motorDrive(&motor2, -1000);
+
   while (1)
   {
     /* USER CODE END WHILE */

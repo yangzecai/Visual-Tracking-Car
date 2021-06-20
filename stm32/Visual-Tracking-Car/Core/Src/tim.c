@@ -424,7 +424,10 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim) {
 	uint16_t cnt3 = 0;
 	cnt2 = __HAL_TIM_GET_COUNTER(&htim2);
 	cnt3 = __HAL_TIM_GET_COUNTER(&htim3);*/
-	printf("TIM2 = %5d, TIM3 = %5d\r\n", readAndClearEncoder(&motor1), readAndClearEncoder(&motor2));
+	
+	//printf("TIM2 = %5d, TIM3 = %5d\r\n", readAndClearEncoder(&motor1), readAndClearEncoder(&motor2));
+	//motorControlwithPID(&motor1, 50);
+	//printf("%d\r\n", getCurrent(&motor1.pid));
 }
 /* USER CODE END 1 */
 
