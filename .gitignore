@@ -1,2 +1,5 @@
 stm32/Visual-Tracking-Car/MDK-ARM/Visual-Tracking-Car/*
 2-XCOM V2.0.exe
+nanopc-cpp/*
+nanopc-py/.vscode/*
+nanopc-py/__pycache__/*

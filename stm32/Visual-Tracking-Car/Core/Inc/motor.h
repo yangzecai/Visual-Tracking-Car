@@ -20,7 +20,8 @@ typedef struct {
 
 void motorControlwithPID(Motor *motor);
 void setTrgtSpeed(Motor *motor, int speed);
-
+void motorDrive(Motor *motor, int speed);
+short readAndClearEncoder(Motor *motor);
 int getCurSpeed(Motor *motor); // for debug
 
 #endif

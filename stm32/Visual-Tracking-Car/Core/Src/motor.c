@@ -29,7 +29,7 @@ void motorDrive(Motor *motor, int speed)
 	} else if (speed < 0) {
 		in1State = GPIO_PIN_SET;
 		in2State = GPIO_PIN_RESET;
-	} else if(speed == 0) {
+	} else if (speed == 0) {
 		in1State = GPIO_PIN_RESET;
 		in2State = GPIO_PIN_RESET;
 	}
@@ -43,8 +43,8 @@ void motorDrive(Motor *motor, int speed)
 void motorControlwithPID(Motor *motor) 
 {
 	motor->curSpeed = readAndClearEncoder(motor);
-	int control = PIDControl(&motor->pid, 
-							 motor->curSpeed, 
+	int control = PIDControl(&motor->pid,
+							 motor->curSpeed,
 							 motor->trgtSpeed);
 	motorDrive(motor, control);
 }

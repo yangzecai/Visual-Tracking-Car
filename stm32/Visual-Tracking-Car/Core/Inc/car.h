@@ -6,4 +6,6 @@
 void carInit(void);
 void carMove(int v, int w);
 
+void test(void); // for debug
+
 #endif

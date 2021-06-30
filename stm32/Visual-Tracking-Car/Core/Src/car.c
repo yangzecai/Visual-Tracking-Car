@@ -33,16 +33,16 @@ void motor1Init()
 {
 	// If the motor reverses, exchange the configuration 
 	// between in1 and in2
-	car.motor1.in1Gpiox = MD_AIN1_GPIO_Port;
-	car.motor1.in1Pinx = MD_AIN1_Pin;
+	car.motor1.in1Gpiox = MD_BIN1_GPIO_Port;
+	car.motor1.in1Pinx = MD_BIN1_Pin;
 	
-	car.motor1.in2Gpiox = MD_AIN2_GPIO_Port;
-	car.motor1.in2Pinx = MD_AIN2_Pin;
-	
-	car.motor1.pwmHtimx = &htim1;
-	car.motor1.pwmChannelx = TIM_CHANNEL_1;
+	car.motor1.in2Gpiox = MD_BIN2_GPIO_Port;
+	car.motor1.in2Pinx = MD_BIN2_Pin;
 
-	car.motor1.encoderHtimx = &htim3;
+	car.motor1.pwmHtimx = &htim1;
+	car.motor1.pwmChannelx = TIM_CHANNEL_2;
+	
+	car.motor1.encoderHtimx = &htim2;
 	
 	car.motor1.maxAbsSpeed = commonMotorMaxAbsSpeed;
 	car.motor1.curSpeed = 0;
@@ -55,16 +55,16 @@ void motor2Init()
 {
 	// If the motor reverses, exchange the configuration 
 	// between in1 and in2
-	car.motor2.in1Gpiox = MD_BIN1_GPIO_Port;
-	car.motor2.in1Pinx = MD_BIN1_Pin;
+	car.motor2.in1Gpiox = MD_AIN2_GPIO_Port;
+	car.motor2.in1Pinx = MD_AIN2_Pin;
 	
-	car.motor2.in2Gpiox = MD_BIN2_GPIO_Port;
-	car.motor2.in2Pinx = MD_BIN2_Pin;
-
+	car.motor2.in2Gpiox = MD_AIN1_GPIO_Port;
+	car.motor2.in2Pinx = MD_AIN1_Pin;
+	
 	car.motor2.pwmHtimx = &htim1;
-	car.motor2.pwmChannelx = TIM_CHANNEL_2;
-	
-	car.motor2.encoderHtimx = &htim2;
+	car.motor2.pwmChannelx = TIM_CHANNEL_1;
+
+	car.motor2.encoderHtimx = &htim3;
 	
 	car.motor2.maxAbsSpeed = commonMotorMaxAbsSpeed;
 	car.motor2.curSpeed = 0;
@@ -78,7 +78,7 @@ void carInit()
 	motor1Init();
 	motor2Init();
 	car.pidTimer = &htim4;
-	car.nanopcUart = &huart1;
+	car.nanopcUart = &huart2;
 	car.rxSta = 0;
 	
 	HAL_TIM_Encoder_Start(car.motor1.encoderHtimx, TIM_CHANNEL_ALL);
@@ -93,7 +93,7 @@ void carInit()
 void carMove(int v, int w)
 {
 	setTrgtSpeed(&car.motor1, v + w);
-	setTrgtSpeed(&car.motor2, v - w);
+	setTrgtSpeed(&car.motor2, -v + w);
 }
 
 void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim) 
@@ -104,8 +104,12 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 			HAL_GPIO_TogglePin(LED_GPIO_Port, LED_Pin);
 			cnt = 0;
 		}
+		
 		motorControlwithPID(&car.motor1);
 		motorControlwithPID(&car.motor2);
+		
+		printf("motor1 : %3d, motor2 : %3d\r\n", 
+			   getCurSpeed(&car.motor1), getCurSpeed(&car.motor2));
 	}
 }
 
@@ -139,4 +143,10 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
 		}
 		HAL_UART_Receive_IT(car.nanopcUart, &car.rxDr, 1);
 	}
+}
+
+void test() 
+{
+	motorDrive(&car.motor1, 1000);
+	motorDrive(&car.motor2, 1000);
 }
